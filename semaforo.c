@@ -5,34 +5,51 @@
 #include "lib/led.h"
 
 #define LED_PIN_G 11
-#define LED_PIN_B 12
+#define LED_PIN_Y 12
 #define LED_PIN_R 13
 
 bool led_stat_r = true;
+bool led_stat_y = false;
 bool led_stat_g = false;
-bool led_stat_b = false;
 
 uint32_t intervalo = 3000;
+
+bool repeating_timer_callback(struct repeating_timer *t) {
+    if (led_stat_r) {
+        printf("Desligando vermelho e ligando amarelo\n");
+        led_stat_r = !led_stat_r;
+        led_stat_y = !led_stat_y;
+        gpio_put(LED_PIN_R, led_stat_r);
+        gpio_put(LED_PIN_Y, led_stat_y);
+    } else if(led_stat_y){
+        printf("Desligando amarelo e ligando verde\n");
+        led_stat_y = !led_stat_y;
+        led_stat_g = !led_stat_g;
+        gpio_put(LED_PIN_Y, led_stat_y);
+        gpio_put(LED_PIN_G, led_stat_g);
+    } else {
+        printf("Desligando verde e ligando vermelho\n");
+        led_stat_g = !led_stat_g;
+        led_stat_r = !led_stat_r;
+        gpio_put(LED_PIN_G, led_stat_g);
+        gpio_put(LED_PIN_R, led_stat_r);
+    }
+}
 
 int main() {
     stdio_init_all();
 
     led_init(LED_PIN_G);
-    led_init(LED_PIN_B);
+    led_init(LED_PIN_Y);
     led_init(LED_PIN_R);
+    gpio_put(LED_PIN_R, led_stat_r);
 
-    absolute_time_t next_wake_time = delayed_by_us(get_absolute_time(), intervalo * 1000);
+    struct repeating_timer timer;
+
+    add_repeating_timer_ms(intervalo, repeating_timer_callback, NULL, &timer);
 
     while (true) {
-        if(time_reached(next_wake_time)){
-            printf("passou-se 3 segundos\n");
-            if (led_stat_r) {
-                led_stat_r = !led_stat_r;
-            }
-            gpio_put(LED_PIN_R, led_stat_r);
-
-            next_wake_time = delayed_by_us(next_wake_time, intervalo * 1000);
-        }
-        sleep_ms(1);
+        printf("Hello world! (1000 ms)\n");
+        sleep_ms(1000);
     }
 }

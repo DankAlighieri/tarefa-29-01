@@ -11,7 +11,7 @@
       "left": -82.6,
       "attrs": { "color": "green" }
     },
-    { "type": "wokwi-led", "id": "led2", "top": 150, "left": -82.6, "attrs": { "color": "blue" } },
+    { "type": "wokwi-led", "id": "led2", "top": 150, "left": -82.6, "attrs": { "color": "yellow" } },
     { "type": "wokwi-led", "id": "led3", "top": 198, "left": -82.6, "attrs": { "color": "red" } },
     {
       "type": "wokwi-pushbutton",
